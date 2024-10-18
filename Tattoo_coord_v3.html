@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UV Coordinates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            background: black;
+        }
+        .container {
+            overflow: hidden;
+            position: relative;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 500px;
+            cursor: pointer;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .controls input {
+            width: 60px;
+            text-align: center;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <label for="inputX">X:</label>
+        <input type="number" id="inputX" value="600">
+        <label for="inputY">Y:</label>
+        <input type="number" id="inputY" value="500">
+    </div>
+
+    <input type="file" id="imageUpload" accept="image/*">
+    <div class="container">
+        <img id="imageDisplay" src="#" alt="Your Image" style="display: none;">
+    </div>
+
+    <script>
+        const inputX = document.getElementById('inputX');
+        const inputY = document.getElementById('inputY');
+
+        let originalAspectRatio = inputX.value / inputY.value;
+
+        inputX.addEventListener('input', function() {
+            inputY.value = Math.round(inputX.value / originalAspectRatio);
+        });
+
+        inputY.addEventListener('input', function() {
+            inputX.value = Math.round(inputY.value * originalAspectRatio);
+        });
+
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const img = document.getElementById('imageDisplay');
+                img.src = reader.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        document.getElementById('imageDisplay').addEventListener('click', function(event) {
+            const img = event.target;
+            const rect = img.getBoundingClientRect();
+            
+            const x = (event.clientX - rect.left) / rect.width;
+            const y = (event.clientY - rect.bottom) / rect.height;
+
+            alert('Coordinates: (' + Math.abs(x.toFixed(2)) + ', ' + Math.abs(y.toFixed(2)) + ')');
+        });
+    </script>
+
+</body>
+</html>
